@@ -1,0 +1,52 @@
+html {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  background: linear-gradient(40deg, #ffffff, #ecf0f1);
+}
+
+body {
+  font-family: 'Oswald', Helvetica, Arial, sans-serif;
+  text-align: center;
+  color: #2c3e50;
+}
+
+.game-head {
+  float: left;
+  width: 18%;
+  margin-top: 2%;
+  margin-left: 2%;
+  padding-right: 5%;
+  text-align: left;
+  height: 90vh;
+}
+
+h1 {
+  font-size: 340%;
+  font-family: 'McLaren', Helvetica, Arial, sans-serif;
+  color: #2980b9;
+}
+
+h1 > span {
+  font-size: 150%;
+}
+
+.bordered {
+  border-right: 7.33px solid #2980b9;
+  height: 60vh;
+  padding-right: 14.502%;
+  padding-top: 5%;
+  padding-left: 2%;
+  width: 100%;
+  margin-top: -29%;
+}
+
+canvas {
+  background: radial-gradient(#34495e 10%, #34495e 90%);
+  margin-top: 5%;
+}
+
+#score {
+  color: #e67e22;
+  font-size: 150%;
+}
