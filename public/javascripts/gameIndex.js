@@ -1,4 +1,6 @@
 function startGame() {
+  document.getElementById("button").disabled = true;
+  myGameArea.score = 0;
   myGameArea.start();
   gamePiece = new component(50, 50, '#9b59b6', 400, 250);
   gameObstacle1 = new component(randomNum(40, 100), randomNum(50, 100), '#9E9E9E', randomNum(0, 200), randomNum(0, 250));
@@ -8,15 +10,23 @@ function startGame() {
   gameObstacle5 = new component(randomNum(40, 158), randomNum(50, 200), '#9E9E9E', randomNum(400, 750), randomNum(400, 450));
 }
 
+function loadGame() {
+  myGameArea.load();
+  gamePiece = new component(50, 50, '#9b59b6', 400, 250);
+  gamePiece.update();
+}
+
 var myGameArea = {
   canvas: document.createElement('canvas'),
   keys: {},
-  score: 0,
-  start: function(){
+  load: function(){
     this.canvas.width = 800;
     this.canvas.height = 500;
     this.context = this.canvas.getContext('2d');
     document.body.append(this.canvas);
+  },
+  score: 0,
+  start: function(){
     this.interval = setInterval(updateGame, 20);
     this.winds = (function loop(){
       setTimeout(function(){
@@ -96,6 +106,7 @@ function updateGame(){
   if (gamePiece.x <= 0 || gamePiece.x >= 750 || gamePiece.y <= 0 || gamePiece.y >= 450 || gamePiece.crashWith(gameObstacle1) || gamePiece.crashWith(gameObstacle2) || gamePiece.crashWith(gameObstacle3) || gamePiece.crashWith(gameObstacle4) || gamePiece.crashWith(gameObstacle5)) {
     clearInterval(myGameArea.interval);
     clearInterval(myGameArea.winds);
+    document.getElementById("button").disabled = false;
   }
   if (myGameArea.keys && myGameArea.keys[37]) {gamePiece.speedX = -1; }
   if (myGameArea.keys && myGameArea.keys[39]) {gamePiece.speedX = 1; }
@@ -111,5 +122,5 @@ function updateGame(){
 }
 
 window.onload = function(){
-  startGame();
+  loadGame();
 }

@@ -14,7 +14,6 @@ body {
 .game-head {
   float: left;
   width: 18%;
-  margin-top: 2%;
   margin-left: 2%;
   padding-right: 5%;
   text-align: left;
@@ -46,10 +45,33 @@ h1 > span {
 
 canvas {
   background: radial-gradient(#34495e 10%, #34495e 90%);
-  margin-top: 5%;
+  margin-top: 4%;
 }
 
 #score {
   color: #e67e22;
   font-size: 150%;
+}
+
+#button {
+  background-color: #e67e22;
+  color: #fff;
+  font-size: 150%;
+  border: none;
+  border-radius: 7px;
+  padding: 5px 20px;
+  margin: 10% 0 0 30%;
+  letter-spacing: 5px;
+}
+
+#button:hover {
+  opacity: 0.75;
+}
+
+#button:disabled {
+  opacity: 0.5;
+}
+
+#button:focus {
+  outline: none;
 }
