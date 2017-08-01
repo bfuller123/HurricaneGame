@@ -23,22 +23,25 @@ body {
 
 h1 {
   font-size: 340%;
-  font-family: 'McLaren', Helvetica, Arial, sans-serif;
-  color: #2980b9;
 }
 
 h1 > span {
   font-size: 150%;
 }
 
+.title {
+  font-family: 'McLaren', Helvetica, Arial, sans-serif;
+  color: #2980b9;
+}
+
 .bordered {
-  border-right: 7.33px solid #2980b9;
+  border-right: 11px solid #8e44ad;
   height: 60vh;
-  padding-right: 14.502%;
+  padding-right: 20%;
   padding-top: 5%;
-  padding-left: 2%;
-  width: 100%;
-  margin-top: -29%;
+  padding-left: 15%;
+  width: 200px;
+  margin-top: -25%;
 }
 
 canvas {
