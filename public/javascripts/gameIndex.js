@@ -1,13 +1,16 @@
+var obstacles = [];
+
 function startGame() {
+  obstacles = [];
   document.getElementById("button").disabled = true;
   myGameArea.score = 0;
   myGameArea.start();
-  gamePiece = new component(50, 50, '#9b59b6', 400, 250);
-  gameObstacle1 = new component(randomNum(40, 100), randomNum(50, 100), '#9E9E9E', randomNum(0, 200), randomNum(0, 250));
-  gameObstacle2 = new component(randomNum(40, 190), randomNum(50, 200), '#9E9E9E', randomNum(0, 200), randomNum(0, 250));
-  gameObstacle3 = new component(randomNum(40, 170), randomNum(50, 170), '#9E9E9E', randomNum(300, 490), randomNum(350, 450));
-  gameObstacle4 = new component(randomNum(40, 200), randomNum(50, 210), '#9E9E9E', randomNum(600, 750), randomNum(300, 450));
-  gameObstacle5 = new component(randomNum(40, 158), randomNum(50, 200), '#9E9E9E', randomNum(400, 750), randomNum(400, 450));
+  gamePiece = new component(50, 50, '#9b59b6', 400, 250, false);
+  gameObstacle1 = new component(randomNum(40, 100), randomNum(50, 100), '#9E9E9E', randomNum(0, 200), randomNum(0, 250), false);
+  gameObstacle2 = new component(randomNum(40, 190), randomNum(50, 200), '#9E9E9E', randomNum(0, 200), randomNum(0, 250), false);
+  gameObstacle3 = new component(randomNum(40, 170), randomNum(50, 170), '#9E9E9E', randomNum(300, 490), randomNum(350, 450), false);
+  gameObstacle4 = new component(randomNum(40, 200), randomNum(50, 210), '#9E9E9E', randomNum(600, 750), randomNum(300, 450), false);
+  gameObstacle5 = new component(randomNum(40, 158), randomNum(50, 200), '#9E9E9E', randomNum(400, 750), randomNum(400, 450), false);
 }
 
 function loadGame() {
@@ -17,6 +20,10 @@ function loadGame() {
 }
 
 var myGameArea = {
+  addObstacle: function(){
+    movingObstacle = new component(35, 35, '#1abc9c', 800, randomNum(0, 450), true);
+    obstacles.push(movingObstacle);
+  },
   canvas: document.createElement('canvas'),
   keys: {},
   load: function(){
@@ -28,6 +35,7 @@ var myGameArea = {
   score: 0,
   start: function(){
     this.interval = setInterval(updateGame, 20);
+    this.addObs = setInterval(myGameArea.addObstacle, 15000);
     this.winds = (function loop(){
       setTimeout(function(){
         updateWinds();
@@ -46,11 +54,12 @@ var myGameArea = {
   }
 }
 
-function component(width, height, color, x, y){
+function component(width, height, color, x, y, breakable){
   this.width = width;
   this.height = height;
   this.x = x;
   this.y = y;
+  this.breakable = breakable;
   this.speedX = 0;
   this.speedy = 0;
   this.gravity = 0;
@@ -119,6 +128,22 @@ function updateGame(){
   gameObstacle3.update();
   gameObstacle2.update();
   gameObstacle1.update();
+  if (obstacles.length > 0) {
+    for(let i = 0; i < obstacles.length; i++) {
+      if (obstacles[i].crashWith(gameObstacle1) || obstacles[i].crashWith(gameObstacle2) || obstacles[i].crashWith(gameObstacle3) || obstacles[i].crashWith(gameObstacle4) || obstacles[i].crashWith(gameObstacle5)) {
+        obstacles.splice(i, 1);
+      }
+      else if (obstacles[i].crashWith(gamePiece)) {
+        clearInterval(myGameArea.interval);
+        clearInterval(myGameArea.winds);
+        document.getElementById("button").disabled = false;
+      }
+      else {
+        obstacles[i].x -= 1;
+        obstacles[i].update();
+      }
+    }
+  }
 }
 
 window.onload = function(){
