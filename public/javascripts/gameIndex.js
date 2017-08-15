@@ -1,4 +1,5 @@
 var obstacles = [];
+var boosts = [];
 
 function startGame() {
   obstacles = [];
@@ -21,7 +22,7 @@ function loadGame() {
 
 var myGameArea = {
   addObstacle: function(){
-    movingObstacle = new component(35, 35, '#1abc9c', 800, randomNum(0, 450), true);
+    movingObstacle = new component(35, 35, '#1abc9c', 751, randomNum(0, 450), true);
     obstacles.push(movingObstacle);
   },
   canvas: document.createElement('canvas'),
@@ -35,13 +36,24 @@ var myGameArea = {
   score: 0,
   start: function(){
     this.interval = setInterval(updateGame, 20);
-    this.addObs = setInterval(myGameArea.addObstacle, 15000);
+    this.addObs = (function loop(){
+      setTimeout(function(){
+        myGameArea.addObstacle();
+        loop();
+      }, randomNum(300, 3000));
+    }());
     this.winds = (function loop(){
       setTimeout(function(){
         updateWinds();
         loop();
       }, randomNum(300, 2000))
-    }())
+    }());
+    this.boost = (function loop(){
+      setTimeout(function(){
+        addBoost();
+        loop();
+      }, randomNum(10000, 35000))
+    }());
     window.addEventListener('keydown', function(e) {
       myGameArea.keys[e.keyCode] = true;
     }),
@@ -52,6 +64,12 @@ var myGameArea = {
   clear: function(){
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
+}
+
+function addBoost() {
+  var boost = new component(20, 20, '#19B5FE', randomNum(0, 750), randomNum(0, 450), false);
+  boosts.pop();
+  boosts.push(boost);
 }
 
 function component(width, height, color, x, y, breakable){
@@ -91,17 +109,25 @@ function component(width, height, color, x, y, breakable){
 }
 
 function updateWinds() {
-  gamePiece.gravity = randomNum(-1.25, 1.25)
-  gamePiece.wind = randomNum(-1.25, 1.25);
+  gamePiece.gravity = 0;
+  gamePiece.wind = 0;
+  gamePiece.gravity = randomNum(-1, 1);
+  gamePiece.wind = randomNum(-1, 1);
+  if (obstacles.length > 0) {
+    for (var i = 0; i < obstacles.length; i++) {
+      obstacles[i].gravity = gamePiece.gravity;
+      obstacles[i].wind = gamePiece.wind;
+    }
+  }
 }
 
 function randomNum(min, max, wholeOrFloat){
   if (min < max) {
     if (wholeOrFloat == "whole") {
-      return Math.floor(Math.random() * (max - min + 1) + min);
+      return Math.floor(Math.random() * (max - min) + min);
     }
     else {
-      return Math.random() * (max - min + 1) + min;
+      return Math.random() * (max - min) + min;
     }
   }
 }
@@ -139,8 +165,19 @@ function updateGame(){
         document.getElementById("button").disabled = false;
       }
       else {
-        obstacles[i].x -= 1;
+        obstacles[i].x -= 2;
+        obstacles[i].x = obstacles[i].x + obstacles[i].wind;
+        obstacles[i].y = obstacles[i].y + obstacles[i].gravity;
         obstacles[i].update();
+      }
+    }
+  }
+  if (boosts.length > 0) {
+    for(let i = 0; i < boosts.length; i++){
+      boosts[i].update();
+      if (boosts[i].crashWith(gamePiece)) {
+        myGameArea.score += 1000;
+        boosts.splice(i, 1);
       }
     }
   }
