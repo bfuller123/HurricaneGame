@@ -1,5 +1,8 @@
 var obstacles = [];
 var boosts = [];
+var obstacleTimeout;
+var windsTimeout;
+var boostTimeout;
 
 function startGame() {
   obstacles = [];
@@ -37,22 +40,23 @@ var myGameArea = {
   start: function(){
     this.interval = setInterval(updateGame, 20);
     this.addObs = (function loop(){
-      setTimeout(function(){
+      obstacleTimeout = setTimeout(function(){
+        console.log('add obstacle');
         myGameArea.addObstacle();
         loop();
-      }, randomNum(300, 3000));
+      }, randomNum(1500, 3000));
     }());
     this.winds = (function loop(){
-      setTimeout(function(){
+      windsTimeout = setTimeout(function(){
         updateWinds();
         loop();
       }, randomNum(300, 2000))
     }());
     this.boost = (function loop(){
-      setTimeout(function(){
+      boostTimeout = setTimeout(function(){
         addBoost();
         loop();
-      }, randomNum(10000, 35000))
+      }, randomNum(5000, 15000))
     }());
     window.addEventListener('keydown', function(e) {
       myGameArea.keys[e.keyCode] = true;
@@ -140,13 +144,15 @@ function updateGame(){
   document.getElementById('score').textContent = myGameArea.score;
   if (gamePiece.x <= 0 || gamePiece.x >= 750 || gamePiece.y <= 0 || gamePiece.y >= 450 || gamePiece.crashWith(gameObstacle1) || gamePiece.crashWith(gameObstacle2) || gamePiece.crashWith(gameObstacle3) || gamePiece.crashWith(gameObstacle4) || gamePiece.crashWith(gameObstacle5)) {
     clearInterval(myGameArea.interval);
-    clearInterval(myGameArea.winds);
+    clearTimeout(windsTimeout);
+    clearTimeout(obstacleTimeout);
+    clearTimeout(boostTimeout);
     document.getElementById("button").disabled = false;
   }
-  if (myGameArea.keys && myGameArea.keys[37]) {gamePiece.speedX = -1; }
-  if (myGameArea.keys && myGameArea.keys[39]) {gamePiece.speedX = 1; }
-  if (myGameArea.keys && myGameArea.keys[38]) {gamePiece.speedY = -1; }
-  if (myGameArea.keys && myGameArea.keys[40]) {gamePiece.speedY = 1; }
+  if (myGameArea.keys && myGameArea.keys[37]) {gamePiece.speedX = -1.2; }
+  if (myGameArea.keys && myGameArea.keys[39]) {gamePiece.speedX = 1.2; }
+  if (myGameArea.keys && myGameArea.keys[38]) {gamePiece.speedY = -1.2; }
+  if (myGameArea.keys && myGameArea.keys[40]) {gamePiece.speedY = 1.2; }
   gamePiece.newPOS();
   gamePiece.update();
   gameObstacle5.update();
@@ -161,7 +167,9 @@ function updateGame(){
       }
       else if (obstacles[i].crashWith(gamePiece)) {
         clearInterval(myGameArea.interval);
-        clearInterval(myGameArea.winds);
+        clearTimeout(windsTimeout);
+        clearTimeout(obstacleTimeout);
+        clearTimeout(boostTimeout);
         document.getElementById("button").disabled = false;
       }
       else {
@@ -175,8 +183,11 @@ function updateGame(){
   if (boosts.length > 0) {
     for(let i = 0; i < boosts.length; i++){
       boosts[i].update();
-      if (boosts[i].crashWith(gamePiece)) {
-        myGameArea.score += 1000;
+      if (boosts[i].crashWith(gameObstacle1) || boosts[i].crashWith(gameObstacle2) || boosts[i].crashWith(gameObstacle3) || boosts[i].crashWith(gameObstacle4) || boosts[i].crashWith(gameObstacle5)) {
+        addBoost();
+      }
+      else if (boosts[i].crashWith(gamePiece)) {
+        myGameArea.score += 5000;
         boosts.splice(i, 1);
       }
     }
